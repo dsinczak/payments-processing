@@ -1,4 +1,5 @@
 package org.dsinczak.paymentsprocessing;
 
-public class PaymentsApplicationService {
+public class PaymentsService {
+
 }

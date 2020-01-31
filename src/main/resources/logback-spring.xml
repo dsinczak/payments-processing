@@ -1,0 +1,13 @@
+<configuration>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS}  %magenta([%thread]) %blue([%X]) %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="org.dsinczak.paymentsprocessing" level="debug" />
+
+    <root level="warn">
+        <appender-ref ref="CONSOLE" />
+    </root>
+</configuration>
