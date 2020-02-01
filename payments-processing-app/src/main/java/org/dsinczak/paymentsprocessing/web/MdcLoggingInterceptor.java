@@ -13,7 +13,7 @@ public class MdcLoggingInterceptor extends HandlerInterceptorAdapter {
     private static final String CORRELATION_ID_LOG_VAR_NAME = "correlationId";
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         MDC.put(CORRELATION_ID_LOG_VAR_NAME,
                 Option.of(request.getHeader(CORRELATION_ID_HEADER_NAME))
                         .filter(h -> !h.isBlank())
@@ -23,7 +23,7 @@ public class MdcLoggingInterceptor extends HandlerInterceptorAdapter {
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         MDC.remove(CORRELATION_ID_LOG_VAR_NAME);
     }
 }
