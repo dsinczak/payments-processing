@@ -15,9 +15,9 @@ import static org.dsinczak.paymentsprocessing.shared.ErrorMessage.error;
 
 public class Payment {
 
-    enum Type {TYPE1, TYPE2, TYPE3}
+    public enum Type {TYPE1, TYPE2, TYPE3}
 
-    enum State {CREATED, CANCELLED}
+    public enum State {CREATED, CANCELLED}
 
     private Clock clock;
 
@@ -81,6 +81,8 @@ public class Payment {
     UUID getPaymentId() {
         return paymentId;
     }
+
+    public Type getType() { return type; }
 
     @Override
     public boolean equals(Object o) {
