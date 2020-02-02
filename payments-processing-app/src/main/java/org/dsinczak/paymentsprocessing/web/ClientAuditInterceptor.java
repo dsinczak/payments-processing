@@ -1,6 +1,5 @@
 package org.dsinczak.paymentsprocessing.web;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.vavr.collection.HashSet;
 import io.vavr.collection.Set;

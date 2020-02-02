@@ -5,6 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.dsinczak.paymentsprocessing.api.events.PaymentEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 
 /**
  * This event publisher stores event in database. This way published event
@@ -29,6 +32,7 @@ public class DbEventPublisher implements EventPublisher {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public void publish(PaymentEvent event) {
         try {
             var eventJson = objectMapper.writeValueAsString(event);

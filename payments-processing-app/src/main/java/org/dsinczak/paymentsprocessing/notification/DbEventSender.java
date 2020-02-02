@@ -6,6 +6,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Component
@@ -21,7 +23,9 @@ public class DbEventSender {
 
     @Async
     @Scheduled(fixedDelay = 1000)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void sendEvents() {
         log.debug("Checking for not send events");
+        //Option<DbEvent> dbEvent = eventRepository.findFirstNotSend();
     }
 }
