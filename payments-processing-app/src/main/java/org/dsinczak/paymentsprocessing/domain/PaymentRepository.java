@@ -4,10 +4,15 @@ import io.vavr.control.Option;
 
 import java.util.UUID;
 
-public interface PaymentRepository {
+// TODO
+public class PaymentRepository {
 
-    UUID save(Payment payment);
+    public UUID save(Payment payment) {
+        return UUID.randomUUID();
+    }
 
-    Option<Payment> findByPaymentId(UUID paymentId);
+    public Option<Payment> findByPaymentId(UUID paymentId) {
+        return Option.none();
+    }
 
 }

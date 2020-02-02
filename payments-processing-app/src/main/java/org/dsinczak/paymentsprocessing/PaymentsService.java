@@ -21,12 +21,16 @@ import org.springframework.stereotype.Component;
 import javax.money.MonetaryAmount;
 import javax.transaction.Transactional;
 import java.util.UUID;
-import static io.vavr.API.*;
-import static io.vavr.Patterns.*;
-import static io.vavr.Predicates.*;
+
 import static org.dsinczak.paymentsprocessing.shared.ErrorMessage.error;
 
-
+/**
+ * Domain Driven Design - Application Service
+ * Service class orchestrates domain objects and implements business cases. It operates only on domain objects and
+ * does not implement domain logic invariants.
+ * Additionally it is service responsibility to add crosscutting concerns like transactions, logging etc.
+ * More: <a href="https://blog.sapiensworks.com/post/2016/08/19/DDD-Application-Services-Explained">DDD Application Services Explained</a>
+ */
 @Component
 public class PaymentsService {
 

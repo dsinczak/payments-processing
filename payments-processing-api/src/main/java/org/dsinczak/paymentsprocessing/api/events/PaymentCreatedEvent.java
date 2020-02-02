@@ -27,4 +27,9 @@ public class PaymentCreatedEvent extends PaymentEvent {
     public int hashCode() {
         return Objects.hash(getEventId());
     }
+
+    @Override
+    public boolean needsConfirmation() {
+        return true;
+    }
 }

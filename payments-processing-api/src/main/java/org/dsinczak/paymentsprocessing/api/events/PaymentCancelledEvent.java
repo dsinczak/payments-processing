@@ -27,4 +27,8 @@ public class PaymentCancelledEvent extends PaymentEvent {
         return Objects.hash(getEventId());
     }
 
+    @Override
+    public boolean needsConfirmation() {
+        return false;
+    }
 }
