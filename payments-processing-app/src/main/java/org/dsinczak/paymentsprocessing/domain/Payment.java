@@ -1,8 +1,8 @@
 package org.dsinczak.paymentsprocessing.domain;
 
+import io.vavr.control.Either;
 import io.vavr.control.Option;
 import org.dsinczak.paymentsprocessing.shared.ErrorMessage;
-import org.javamoney.moneta.Money;
 
 import javax.money.MonetaryAmount;
 import java.time.Clock;
@@ -21,6 +21,8 @@ public class Payment {
 
     private Clock clock;
 
+    // Business is is separate from technical DB id.
+    // This also solves problem of equals and hashcode
     private UUID paymentId = UUID.randomUUID();
     private Type type;
     private Iban debtor;
@@ -29,7 +31,7 @@ public class Payment {
     private MonetaryAmount amount;
     private LocalDateTime created;
     private State state = State.CREATED;
-    private Option<String> details = Option.none();
+    private Option<String> details;
     private Option<MonetaryAmount> cancellationFee = Option.none();
 
     // For testing purposes
@@ -40,6 +42,7 @@ public class Payment {
         this.debtor = debtor;
         this.creditor = creditor;
         this.creditorBic = Option.of(creditorBic);
+        this.details = Option.of(details);
         this.amount = amount;
     }
 
@@ -51,52 +54,33 @@ public class Payment {
         this(clock, LocalDateTime.now(clock), type, debtor, creditor, creditorBic, details, amount);
     }
 
-    public Option<ErrorMessage> cancel(CancellationFeePolicy cancellationFeePolicy) {
+    /**
+     * Cancel payment with regards to business logic invariants (we can only cancel the same day payment was created)
+     *
+     * @param cancellationFeePolicy cancellation fee may apply according to policy
+     * @return either error message or calculated fee value
+     */
+    public Either<ErrorMessage, MonetaryAmount> cancel(CancellationFeePolicy cancellationFeePolicy) {
         Objects.requireNonNull(cancellationFeePolicy, "Cannot cancel without fee policy");
         if (state == State.CANCELLED) {
-            return Option.of(error("Cancellation failure. Payment already cancelled"));
+            return Either.left(error("Cancellation failure. Payment already cancelled"));
         }
 
         var now = LocalDateTime.now(clock);
         var cancellationDeadline = created.plusDays(1).with(LocalTime.MIDNIGHT);
         if (now.isAfter(cancellationDeadline)) {
-            return Option.of(error("Cancellation failure. Payment cancellation was possible before {}", cancellationDeadline));
+            return Either.left(error("Cancellation failure. Payment cancellation was possible before {}", cancellationDeadline));
         }
 
         this.state = State.CANCELLED;
-        this.cancellationFee = Option.some(cancellationFeePolicy.apply(created, type, amount));
-        return Option.none();
+        var fee = cancellationFeePolicy.apply(created, type, amount);
+        this.cancellationFee = Option.some(fee);
+        return Either.right(fee);
     }
 
-    public Type getType() {
-        return type;
+    UUID getPaymentId() {
+        return paymentId;
     }
-
-    public Iban getDebtor() {
-        return debtor;
-    }
-
-    public Iban getCreditor() {
-        return creditor;
-    }
-
-    public Option<Bic> getCreditorBic() {
-        return creditorBic;
-    }
-
-    public MonetaryAmount getAmount() {
-        return amount;
-    }
-
-    public State getState() {
-        return state;
-    }
-
-    public Option<MonetaryAmount> getCancellationFee() {
-        return cancellationFee;
-    }
-
-    public Option<String> getDetails() { return details; }
 
     @Override
     public boolean equals(Object o) {

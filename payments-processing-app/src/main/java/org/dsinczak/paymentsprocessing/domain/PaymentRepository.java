@@ -1,7 +1,13 @@
 package org.dsinczak.paymentsprocessing.domain;
 
-import org.springframework.stereotype.Component;
+import io.vavr.control.Option;
 
-public class PaymentRepository {
+import java.util.UUID;
+
+public interface PaymentRepository {
+
+    UUID save(Payment payment);
+
+    Option<Payment> findByPaymentId(UUID paymentId);
 
 }
