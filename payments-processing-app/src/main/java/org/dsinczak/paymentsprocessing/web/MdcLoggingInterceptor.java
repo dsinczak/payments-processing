@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public class MdcLoggingInterceptor extends HandlerInterceptorAdapter {
     private static final String CORRELATION_ID_HEADER_NAME = "X-Correlation-Id";
-    private static final String CORRELATION_ID_LOG_VAR_NAME = "correlationId";
+    static final String CORRELATION_ID_LOG_VAR_NAME = "correlationId";
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {

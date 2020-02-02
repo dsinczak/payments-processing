@@ -66,4 +66,20 @@ class ValidationsCaseSpec extends Specification {
             null    | false
     }
 
+    def 'should validate BIC'() {
+        expect:
+            Validations.validateBic("Damian", bic).isValid() == isValid
+        where:
+            bic | isValid
+            "EBOSPLPW"  | true
+            "CITIPLPX"  | true
+            "BOTKPLPW"  | true
+            "EBSLPW"    | false
+            "9ITIPLPX"  | false
+            "BOTK666"   | false
+            null        | false
+
+
+    }
+
 }

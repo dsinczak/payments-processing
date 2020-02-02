@@ -6,8 +6,6 @@ import io.vavr.collection.Seq;
 import io.vavr.control.Either;
 import io.vavr.control.Validation;
 import org.dsinczak.paymentsprocessing.shared.ErrorMessage;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import javax.money.CurrencyUnit;
 import javax.money.Monetary;
@@ -110,7 +108,7 @@ public class PaymentFactory {
                 case TYPE3:
                     return validateType3(this);
                 default:
-                    throw new IllegalStateException("Payment type " + type + " is not supported.");
+                    throw new IllegalArgumentException("Payment type " + type + " is not supported.");
             }
         }
     }

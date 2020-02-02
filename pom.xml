@@ -8,9 +8,12 @@
 		<version>2.2.4.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
+
 	<groupId>org.dsinczak</groupId>
 	<artifactId>payments-processing</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
 	<name>payments-processing</name>
 	<description>Compact RESTful web service for payments processing</description>
 
