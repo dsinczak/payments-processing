@@ -77,7 +77,7 @@ public class PaymentsController {
 
         return Match(dto).of(
                 Case($Some($()), this::ok),
-                Case($None(), badRequest(error("Payment with id {} not found", paymentId)))
+                Case($None(), badRequest(error("Payment with id {0} not found", paymentId)))
         );
     }
 
