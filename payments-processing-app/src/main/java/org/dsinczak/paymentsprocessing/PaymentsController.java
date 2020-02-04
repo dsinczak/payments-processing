@@ -66,7 +66,7 @@ public class PaymentsController {
     // There should also be an option to query specific payment by ID, and it should return payment ID and cancelation fee.
 
     @GetMapping("/{paymentId}/cancellation")
-    ResponseEntity<Object> getNotCancelled(@PathVariable String paymentId) {
+    ResponseEntity<Object> getCancellationByPaymentId(@PathVariable String paymentId) {
         var dto = Try.of(() -> UUID.fromString(paymentId)).toOption()
                 .flatMap(paymentViewRepository::findByPaymentId)
                 .map(pv->new PaymentCancellationFeeDto(
