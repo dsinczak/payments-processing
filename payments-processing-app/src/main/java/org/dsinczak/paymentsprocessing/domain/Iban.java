@@ -1,8 +1,15 @@
 package org.dsinczak.paymentsprocessing.domain;
 
-import lombok.Value;
+import lombok.*;
 
-@Value
+import javax.persistence.Embeddable;
+
+@Getter
+@ToString
+@EqualsAndHashCode
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PACKAGE)
+@Embeddable
 public class Iban {
-   String value;
+    String value;
 }

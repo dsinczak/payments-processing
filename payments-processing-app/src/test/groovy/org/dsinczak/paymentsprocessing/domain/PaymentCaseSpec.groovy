@@ -41,10 +41,10 @@ class PaymentCaseSpec extends Specification {
         where:
             now                         | createTime                             | expectedResult
             clock(1985, 02, 19, 16, 10) | LocalDateTime.of(1985, 02, 19, 16, 10) | Either.right(amount)
-            clock(1985, 02, 19, 16, 10) | LocalDateTime.of(1985, 02, 18, 16, 10) | Either.left(error("Cancellation failure. Payment cancellation was possible before {}", LocalDateTime.of(1985, 02, 19, 00, 00)))
+            clock(1985, 02, 19, 16, 10) | LocalDateTime.of(1985, 02, 18, 16, 10) | Either.left(error("Cancellation failure. Payment cancellation was possible before {0}", LocalDateTime.of(1985, 02, 19, 00, 00)))
             clock(1985, 02, 19, 23, 59) | LocalDateTime.of(1985, 02, 19, 16, 10) | Either.right(amount)
             clock(1985, 02, 20, 0, 0)   | LocalDateTime.of(1985, 02, 19, 16, 10) | Either.right(amount)
-            clock(1985, 02, 20, 0, 1)   | LocalDateTime.of(1985, 02, 19, 16, 10) | Either.left(error("Cancellation failure. Payment cancellation was possible before {}", LocalDateTime.of(1985, 02, 20, 00, 00)))
+            clock(1985, 02, 20, 0, 1)   | LocalDateTime.of(1985, 02, 19, 16, 10) | Either.left(error("Cancellation failure. Payment cancellation was possible before {0}", LocalDateTime.of(1985, 02, 20, 00, 00)))
     }
 
     def "should apply cancellation fee policy"() {

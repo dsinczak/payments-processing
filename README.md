@@ -40,4 +40,7 @@ Imagine other (micro)service should be notified about the fact we saved valid TY
 
 It would also be nice to be able to launch app and get all dependencies up and running in one command.
 
+# Solution
 
+## Architecture
+https://medium.com/swlh/implementing-a-hexagonal-architecture-bcfbe0d63622

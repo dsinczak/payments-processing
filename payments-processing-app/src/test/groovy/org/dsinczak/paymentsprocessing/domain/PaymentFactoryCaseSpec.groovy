@@ -26,7 +26,7 @@ class PaymentFactoryCaseSpec extends Specification {
                     .withDetails("Make the money rain")
                     .build()
         then:
-            payment.getLeft() == List.of(error("Payment type {} is invalid. Supported types {}.", "TYPE666", Payment.Type.values()))
+            payment.getLeft() == List.of(error("Payment type {0} is invalid. Supported types {1}.", "TYPE666", Payment.Type.values()))
     }
 
     def 'should create TYPE1 payment'() {

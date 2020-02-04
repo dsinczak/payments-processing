@@ -1,8 +1,16 @@
 package org.dsinczak.paymentsprocessing.domain;
 
-import lombok.Value;
+import lombok.*;
 
-@Value
-public class Bic {
+import javax.persistence.Embeddable;
+import java.io.Serializable;
+
+@Getter
+@ToString
+@EqualsAndHashCode
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PACKAGE)
+@Embeddable
+public class Bic implements Serializable {
     String value;
 }

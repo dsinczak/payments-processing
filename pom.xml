@@ -24,6 +24,7 @@
 	<modules>
 		<module>payments-processing-api</module>
 		<module>payments-processing-app</module>
+		<module>payments-processing-it</module>
 	</modules>
 
 	<dependencyManagement>
@@ -48,6 +49,11 @@
 			<dependency>
 				<groupId>org.dsinczak</groupId>
 				<artifactId>payments-processing-api</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.dsinczak</groupId>
+				<artifactId>payments-processing-app</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 		</dependencies>

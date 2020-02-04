@@ -1,18 +1,27 @@
 package org.dsinczak.paymentsprocessing.api.events;
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.ToString;
 
 import java.util.Objects;
-import java.util.UUID;
 
 @Getter
 @ToString
-@AllArgsConstructor
 public class PaymentCancelledEvent extends PaymentEvent {
 
-    private final UUID paymentId;
+    private final String paymentId;
+
+    public PaymentCancelledEvent(String paymentId) {
+        this.paymentId = paymentId;
+    }
+
+    @JsonCreator
+    PaymentCancelledEvent(@JsonProperty("eventId") String eventId, @JsonProperty("paymentId") String paymentId) {
+        super(eventId);
+        this.paymentId = paymentId;
+    }
 
     @Override
     public boolean equals(Object o) {

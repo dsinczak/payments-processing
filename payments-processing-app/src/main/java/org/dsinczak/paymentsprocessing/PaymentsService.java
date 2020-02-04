@@ -6,6 +6,7 @@ import io.vavr.collection.HashSet;
 import io.vavr.collection.Seq;
 import io.vavr.collection.Set;
 import io.vavr.control.Either;
+import lombok.extern.slf4j.Slf4j;
 import org.dsinczak.paymentsprocessing.api.PaymentDto;
 import org.dsinczak.paymentsprocessing.api.events.PaymentCancelledEvent;
 import org.dsinczak.paymentsprocessing.api.events.PaymentCreatedEvent;
@@ -31,6 +32,7 @@ import static org.dsinczak.paymentsprocessing.shared.ErrorMessage.error;
  * Additionally it is service responsibility to add crosscutting concerns like transactions, logging etc.
  * More: <a href="https://blog.sapiensworks.com/post/2016/08/19/DDD-Application-Services-Explained">DDD Application Services Explained</a>
  */
+@Slf4j
 @Component
 public class PaymentsService {
 
@@ -49,8 +51,9 @@ public class PaymentsService {
         this.eventPublisher = eventPublisher;
     }
 
-    @Transactional
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public Either<Seq<ErrorMessage>, UUID> createNewPayment(PaymentDto paymentDto) {
+        log.info("Creating new payment {}", paymentDto);
         var payment = paymentFactory.create()
                 .withType(paymentDto.getType())
                 .withAmount(paymentDto.getAmount())
@@ -67,24 +70,31 @@ public class PaymentsService {
         // send events (only for TYPE1 and TYPE2)
         paymentWithId.toOption()
                 .filter(ip -> CREATION_NOTIFICATION_TYPES.contains(ip._2.getType()))
-                .forEach(ip -> eventPublisher.publish(new PaymentCreatedEvent(ip._1, paymentDto.getType())));
+                .forEach(ip -> eventPublisher.publish(new PaymentCreatedEvent(ip._1.toString(), paymentDto.getType())));
 
-        return paymentWithId.map(Tuple2::_1);
+        var result = paymentWithId.map(Tuple2::_1);
+        log.debug("Payment creation result {}", result);
+
+        return result;
     }
 
-    @Transactional
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public Either<ErrorMessage, MonetaryAmount> cancelPayment(UUID paymentId) {
+        log.info("Payment {} cancellation", paymentId);
         var cancellation = paymentRepository.findByPaymentId(paymentId)
-                .toEither(error("Payment with ID: {} does not exist.", paymentId))
+                .toEither(error("Payment with ID: {0} does not exist.", paymentId))
                 .flatMap(payment -> payment.cancel(cancellationFeePolicy).map(fee -> Tuple.of(fee, payment)));
 
         // Persist and send events
         cancellation.map(Tuple2::_2).forEach(payment -> {
             paymentRepository.save(payment);
-            eventPublisher.publish(new PaymentCancelledEvent(paymentId));
+            eventPublisher.publish(new PaymentCancelledEvent(paymentId.toString()));
         });
 
-        return cancellation.map(Tuple2::_1);
+        var result = cancellation.map(Tuple2::_1);
+        log.debug("Payment cancellation result {}", result);
+
+        return result;
     }
 
 }

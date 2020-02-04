@@ -1,8 +1,9 @@
-package org.dsinczak.paymentsprocessing.notification;
+package org.dsinczak.paymentsprocessing.notification.twoPhasePublisher;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.dsinczak.paymentsprocessing.api.events.PaymentEvent;
+import org.dsinczak.paymentsprocessing.notification.EventPublisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -35,8 +36,9 @@ public class DbEventPublisher implements EventPublisher {
     @Transactional(propagation = Propagation.REQUIRED)
     public void publish(PaymentEvent event) {
         try {
+            log.debug("Storing event {} to database for further processing.", event);
             var eventJson = objectMapper.writeValueAsString(event);
-            eventRepository.save(new DbEvent(event.getEventId(), eventJson));
+            eventRepository.save(new DbEvent(eventJson));
         } catch (Exception e) {
             log.error("Unable to publish event: " + event, e);
         }

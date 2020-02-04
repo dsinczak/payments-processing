@@ -13,6 +13,10 @@ import java.time.Clock;
 
 import static io.vavr.control.Validation.combine;
 
+/**
+ * {@link Payment} aggregate factory. Covers invariants of payment creation behind interface.
+ * More: https://medium.com/withbetterco/using-aggregates-and-factories-in-domain-driven-design-34e0dff220c3
+ */
 public class PaymentFactory {
 
     private static final CurrencyUnit USD = Monetary.getCurrency("USD");
@@ -28,22 +32,29 @@ public class PaymentFactory {
         return new PaymentBuilder();
     }
 
+    /**
+     * Functional composition of validations for TYPE1 and TYPE2 of payment
+     */
     private Validation<Seq<ErrorMessage>, Payment> validateBasicType(Payment.Type type, PaymentBuilder builder, CurrencyUnit currency) {
-        return combine(Validations.validateAmount(builder.currency, builder.amount, HashSet.of(currency)),
+        return combine(
+                Validations.validateAmount(builder.currency, builder.amount, HashSet.of(currency)),
                 Validations.validateIban("Debtor", builder.debtor),
                 Validations.validateIban("Creditor", builder.creditor),
                 Validations.validateDetails(builder.details))
                 .ap((amount, debtor, creditor, details) -> new Payment(applicationClock, type, debtor, creditor, null, details, amount));
     }
 
+    /**
+     * Functional composition of validations for TYPE3 of payment
+     */
     private Validation<Seq<ErrorMessage>, Payment> validateType3(PaymentBuilder builder) {
-        return combine(Validations.validateAmount(builder.currency, builder.amount, HashSet.of(USD, EUR)),
+        return combine(
+                Validations.validateAmount(builder.currency, builder.amount, HashSet.of(USD, EUR)),
                 Validations.validateIban("Debtor", builder.debtor),
                 Validations.validateIban("Creditor", builder.creditor),
                 Validations.validateBic("Creditor", builder.creditorBic)
         ).ap((amount, debtor, creditor, bic) -> new Payment(applicationClock, Payment.Type.TYPE3, debtor, creditor, bic, null, amount));
     }
-
 
     public class PaymentBuilder {
         private String type;
@@ -93,6 +104,12 @@ public class PaymentFactory {
         }
 
         public Either<Seq<ErrorMessage>, Payment> build() {
+            /*
+             * I'm aware of JSR-303 (https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-validation)
+             * But what i do not like about it is its implicit behaviour (a.k.a exception throwing, also known as modern goto statement)
+             * Type returned by build(): Either<Seq<ErrorMessage>, Payment> exactly suggests what is the
+             * expected result: either creation error or payment. Another thing is
+             */
             return Validations.validateType(this.type)
                     .<Seq<ErrorMessage>>mapError(List::of)
                     .flatMap(this::matchValidationType)
