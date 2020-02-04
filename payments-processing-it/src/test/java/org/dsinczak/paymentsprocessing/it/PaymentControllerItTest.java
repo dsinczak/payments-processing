@@ -3,6 +3,7 @@ package org.dsinczak.paymentsprocessing.it;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.dsinczak.paymentsprocessing.api.ErrorDto;
 import org.dsinczak.paymentsprocessing.api.MoneyDto;
+import org.dsinczak.paymentsprocessing.api.PaymentCancellationFeeDto;
 import org.dsinczak.paymentsprocessing.api.PaymentDto;
 import org.dsinczak.paymentsprocessing.api.events.PaymentCreatedEvent;
 import org.dsinczak.paymentsprocessing.domain.Payment;
@@ -24,6 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -164,9 +166,22 @@ public class PaymentControllerItTest {
                 .getResponse()
                 .getContentAsString();
 
+        // Then - cancellation amount is returned
         var feeMoney = objectMapper.readValue(fee, MoneyDto.class);
         assertThat(feeMoney.getAmount()).isEqualTo("0");
         assertThat(feeMoney.getCurrency()).isEqualTo("EUR");
+
+        // And - we can retrieve payment fee entity
+        var paymentFee = mockMvc.perform(get("/payment/{paymentId}/cancellation", paymentId))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        var paymentFeeDto = objectMapper.readValue(paymentFee, PaymentCancellationFeeDto.class);
+
+        assertThat(paymentFeeDto.getCancellationFeeAmount()).isEqualTo("0");
+        assertThat(paymentFeeDto.getCancellationFeeCurrency()).isEqualTo("EUR");
     }
 
     @Test
