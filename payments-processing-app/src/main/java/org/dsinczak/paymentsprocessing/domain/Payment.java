@@ -70,8 +70,8 @@ public class Payment {
         this.type = type;
         this.debtor = debtor;
         this.creditor = creditor;
-        this.creditorBic = null;
-        this.details = null;
+        this.creditorBic = creditorBic;
+        this.details = details;
         this.amount = amount;
     }
 
